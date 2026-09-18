@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>大会二维码</title>
-  <link rel="stylesheet" href="assets/css/app.css?v=20260918d">
+  <link rel="stylesheet" href="assets/css/app.css?v=20260918e">
 </head>
 <body>
   <main class="qr-page">
@@ -12,13 +12,13 @@
     <h1>扫码查看会务手册</h1>
     <p>请用手机相机或微信扫下面最新二维码。旧码可能还停在缓存里的旧页面。</p>
     <div class="qr-box">
-      <img src="assets/qr.png?v=20260918d" alt="大会二维码">
+      <img src="assets/qr.png?v=20260918e" alt="大会二维码">
     </div>
     <div class="qr-url" id="qrUrl">加载中…</div>
     <p style="margin-top:18px">若微信里还是旧版，点右上角「在浏览器中打开」。</p>
   </main>
   <script>
-    fetch("assets/site.json?v=20260918d")
+    fetch("assets/site.json?v=20260918e")
       .then((r) => r.json())
       .then((d) => { document.getElementById("qrUrl").textContent = d.url; })
       .catch(() => { document.getElementById("qrUrl").textContent = location.origin; });
