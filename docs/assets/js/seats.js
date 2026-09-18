@@ -18,11 +18,12 @@ function hideLoading() {
 
 img.addEventListener("load", hideLoading);
 img.addEventListener("error", () => {
-  if (!img.src.endsWith(localSrc)) {
-    img.src = localSrc;
+  if (img.dataset.fallback === "1") {
+    if (loading) loading.textContent = "座位图加载失败，请稍后重试";
     return;
   }
-  if (loading) loading.textContent = "座位图加载失败，请稍后重试";
+  img.dataset.fallback = "1";
+  img.src = assetFallback(localSrc);
 });
 if (img.complete && img.naturalWidth) hideLoading();
 
