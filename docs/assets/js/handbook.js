@@ -7,7 +7,7 @@ let startIndex = 0;
 let imgs = [];
 
 function relPage(i) {
-  return `assets/pages/m/page-${String(i + 1).padStart(2, "0")}.jpg`;
+  return `assets/pages/p/page-${String(i + 1).padStart(2, "0")}.jpg`;
 }
 
 function ensureBook() {
@@ -23,7 +23,7 @@ function ensureBook() {
 function measure() {
   const maxW = Math.max(260, wrap.clientWidth - 16);
   const maxH = Math.max(360, wrap.clientHeight - 8);
-  const ratio = 1080 / 1528;
+  const ratio = 1200 / 1698;
   let pageW = maxW;
   let pageH = Math.floor(pageW / ratio);
   if (pageH > maxH) {
@@ -39,18 +39,10 @@ function loadPage(i) {
   if (img.dataset.ready === "1" || img.dataset.loading === "1") return;
   img.dataset.loading = "1";
   img.src = assetUrl(relPage(i));
-  setTimeout(() => {
-    if (img.dataset.ready === "1" || img.dataset.fallback === "1") return;
-    img.dataset.fallback = "1";
-    img.src = assetFallback(relPage(i));
-  }, 5000);
 }
 
-function around(i) {
-  loadPage(i);
-  loadPage(i + 1);
-  loadPage(i + 2);
-  loadPage(i - 1);
+function loadAll() {
+  for (let i = 0; i < PAGE_COUNT; i += 1) loadPage(i);
 }
 
 function buildPages(bookEl) {
@@ -59,22 +51,30 @@ function buildPages(bookEl) {
   for (let i = 0; i < PAGE_COUNT; i += 1) {
     const page = document.createElement("div");
     page.className = "flip-page";
+    const wait = document.createElement("div");
+    wait.className = "page-wait";
+    wait.textContent = "本页加载中";
     const img = document.createElement("img");
     img.alt = `会务手册第 ${i + 1} 页`;
-    img.width = 1080;
-    img.height = 1528;
+    img.width = 1200;
+    img.height = 1698;
     img.draggable = false;
     img.decoding = "async";
     img.addEventListener("load", () => {
       img.dataset.ready = "1";
       img.dataset.loading = "0";
+      page.classList.add("is-ready");
       if (i === 0 && loading) loading.hidden = true;
     });
     img.addEventListener("error", () => {
-      if (img.dataset.fallback === "1") return;
-      img.dataset.fallback = "1";
-      img.src = assetFallback(relPage(i));
+      const n = Number(img.dataset.try || "0");
+      const bases = (window.CDN_BASES || []).concat([""]);
+      if (n >= bases.length) return;
+      img.dataset.try = String(n + 1);
+      const base = bases[n];
+      img.src = base ? `${base}${relPage(i)}?v=${ASSET_VER}` : assetFallback(relPage(i));
     });
+    page.appendChild(wait);
     page.appendChild(img);
     bookEl.appendChild(page);
     imgs.push(img);
@@ -99,7 +99,7 @@ function render() {
   bookEl.style.width = `${pageW}px`;
   bookEl.style.height = `${pageH}px`;
   const pages = buildPages(bookEl);
-  around(startIndex);
+  loadAll();
 
   pageFlip = new St.PageFlip(bookEl, {
     width: pageW,
@@ -121,11 +121,13 @@ function render() {
   pageFlip.loadFromHTML(pages);
   pageFlip.on("flip", (e) => {
     pageTag.textContent = `${e.data + 1} / ${PAGE_COUNT}`;
-    around(e.data);
+    loadPage(e.data);
+    loadPage(e.data + 1);
+    loadPage(e.data + 2);
   });
   pageFlip.on("init", () => {
     pageTag.textContent = `${pageFlip.getCurrentPageIndex() + 1} / ${PAGE_COUNT}`;
-    around(pageFlip.getCurrentPageIndex());
+    loadAll();
   });
 }
 
@@ -142,4 +144,4 @@ window.addEventListener("resize", () => {
   resizeTimer = setTimeout(render, 250);
 });
 
-render();
+chooseCdn(relPage(0)).then(render);
