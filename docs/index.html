@@ -7,13 +7,27 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   <title>黑龙江大学服务龙江高质量发展大会</title>
-  <script src="assets/js/boot.js?v=20260918e"></script>
-  <link rel="stylesheet" href="assets/css/app.css?v=20260918e">
+  <script>
+    window.STATIC_VER = "20260918e";
+    window.STATIC_BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+      ? ""
+      : "https://cdn.jsdmirror.com/gh/www123-345rft/hlju-huiwu@main/docs/";
+    (function () {
+      try {
+        var u = new URL(location.href);
+        if (u.searchParams.get("v") !== window.STATIC_VER) {
+          u.searchParams.set("v", window.STATIC_VER);
+          location.replace(u.href);
+        }
+      } catch (e) {}
+      document.write('<link rel="stylesheet" href="' + window.STATIC_BASE + 'assets/css/app.css?v=' + window.STATIC_VER + '">');
+    })();
+  </script>
 </head>
 <body>
   <main class="home">
     <div class="poster">
-      <img id="coverImg" src="assets/pages/p/page-01.jpg?v=20260918e" alt="会务手册封面">
+      <img id="coverImg" alt="会务手册封面">
     </div>
     <section class="home-panel">
       <p class="home-kicker">扎根黑土　赋能振兴</p>
@@ -37,18 +51,8 @@
       </div>
     </section>
   </main>
-  <script src="assets/js/cdn.js?v=20260918e"></script>
   <script>
-    (function () {
-      var img = document.getElementById("coverImg");
-      var rel = "assets/pages/p/page-01.jpg";
-      img.addEventListener("error", function () {
-        if (img.dataset.fallback === "1") return;
-        img.dataset.fallback = "1";
-        img.src = assetFallback(rel);
-      });
-      img.src = assetUrl(rel);
-    })();
+    document.getElementById("coverImg").src = window.STATIC_BASE + "assets/pages/p/page-01.jpg?v=" + window.STATIC_VER;
   </script>
 </body>
 </html>
