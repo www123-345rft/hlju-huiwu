@@ -1,88 +1,54 @@
 const PAGES = Array.from({ length: 11 }, (_, i) =>
-  `assets/pages/page-${String(i + 1).padStart(2, "0")}.jpg`
+  assetUrl(`assets/pages/page-${String(i + 1).padStart(2, "0")}.jpg`)
 );
 
-const wrap = document.querySelector(".book-wrap");
+const img = document.getElementById("pageImg");
 const pageTag = document.getElementById("pageTag");
-let pageFlip = null;
-let startIndex = 0;
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+let index = 0;
+let startX = 0;
 
-function ensureBook() {
-  let el = document.getElementById("book");
-  if (!el) {
-    el = document.createElement("div");
-    el.id = "book";
-    wrap.appendChild(el);
-  }
-  return el;
+function preload(i) {
+  if (i < 0 || i >= PAGES.length) return;
+  const el = new Image();
+  el.src = PAGES[i];
 }
 
-function measure() {
-  const maxW = Math.max(260, wrap.clientWidth - 4);
-  const maxH = Math.max(340, wrap.clientHeight - 4);
-  const ratio = 1429 / 2021;
-  let pageW = maxW;
-  let pageH = Math.floor(pageW / ratio);
-  if (pageH > maxH) {
-    pageH = maxH;
-    pageW = Math.floor(pageH * ratio);
-  }
-  return { pageW, pageH, boxW: pageW, boxH: pageH };
+function show(i, dir) {
+  index = Math.max(0, Math.min(PAGES.length - 1, i));
+  img.classList.remove("turn-next", "turn-prev");
+  void img.offsetWidth;
+  img.classList.add(dir === "prev" ? "turn-prev" : "turn-next");
+  img.src = PAGES[index];
+  pageTag.textContent = `${index + 1} / ${PAGES.length}`;
+  prevBtn.disabled = index === 0;
+  nextBtn.disabled = index === PAGES.length - 1;
+  preload(index + 1);
+  preload(index - 1);
 }
 
-function render() {
-  if (pageFlip) {
-    startIndex = pageFlip.getCurrentPageIndex();
-    try {
-      pageFlip.destroy();
-    } catch (err) {
-      /* ignore */
-    }
-    pageFlip = null;
-  }
-
-  wrap.innerHTML = "";
-  const bookEl = ensureBook();
-  const { pageW, pageH, boxW, boxH } = measure();
-  bookEl.style.width = `${boxW}px`;
-  bookEl.style.height = `${boxH}px`;
-
-  pageFlip = new St.PageFlip(bookEl, {
-    width: pageW,
-    height: pageH,
-    size: "fixed",
-    autoSize: false,
-    maxShadowOpacity: 0.5,
-    showCover: true,
-    mobileScrollSupport: false,
-    usePortrait: true,
-    flippingTime: 740,
-    drawShadow: true,
-    startPage: startIndex,
-    swipeDistance: 24,
-    useMouseEvents: true,
-  });
-
-  pageFlip.loadFromImages(PAGES);
-  pageFlip.on("flip", (e) => {
-    pageTag.textContent = `${e.data + 1} / ${PAGES.length}`;
-  });
-  pageFlip.on("init", () => {
-    pageTag.textContent = `${pageFlip.getCurrentPageIndex() + 1} / ${PAGES.length}`;
-  });
-}
-
-document.getElementById("prevBtn").addEventListener("click", () => pageFlip && pageFlip.flipPrev());
-document.getElementById("nextBtn").addEventListener("click", () => pageFlip && pageFlip.flipNext());
+prevBtn.addEventListener("click", () => index > 0 && show(index - 1, "prev"));
+nextBtn.addEventListener("click", () => index < PAGES.length - 1 && show(index + 1, "next"));
 window.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") pageFlip && pageFlip.flipPrev();
-  if (e.key === "ArrowRight") pageFlip && pageFlip.flipNext();
+  if (e.key === "ArrowLeft") prevBtn.click();
+  if (e.key === "ArrowRight") nextBtn.click();
 });
 
-let resizeTimer = 0;
-window.addEventListener("resize", () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(render, 200);
+const stage = document.getElementById("bookStage");
+stage.addEventListener("touchstart", (e) => {
+  startX = e.changedTouches[0].clientX;
+}, { passive: true });
+stage.addEventListener("touchend", (e) => {
+  const dx = e.changedTouches[0].clientX - startX;
+  if (Math.abs(dx) < 40) return;
+  if (dx < 0) nextBtn.click();
+  else prevBtn.click();
+}, { passive: true });
+
+img.addEventListener("error", () => {
+  const local = `assets/pages/page-${String(index + 1).padStart(2, "0")}.jpg`;
+  if (!img.src.endsWith(local)) img.src = local;
 });
 
-render();
+show(0, "next");
