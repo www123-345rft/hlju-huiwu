@@ -1,5 +1,8 @@
 const viewer = document.getElementById("viewer");
 const img = document.getElementById("seatImg");
+const loading = document.getElementById("seatLoading");
+const localSrc = "assets/seats/seating.jpg";
+img.src = assetUrl(localSrc);
 
 let scale = 1;
 let x = 0;
@@ -8,6 +11,20 @@ let pointers = new Map();
 let lastDist = 0;
 let dragging = false;
 let dragStart = { x: 0, y: 0, px: 0, py: 0 };
+
+function hideLoading() {
+  if (loading) loading.hidden = true;
+}
+
+img.addEventListener("load", hideLoading);
+img.addEventListener("error", () => {
+  if (!img.src.endsWith(localSrc)) {
+    img.src = localSrc;
+    return;
+  }
+  if (loading) loading.textContent = "座位图加载失败，请稍后重试";
+});
+if (img.complete && img.naturalWidth) hideLoading();
 
 function apply() {
   img.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
