@@ -5,25 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>会务手册</title>
-  <script src="assets/js/boot.js?v=20260918c"></script>
-  <link rel="stylesheet" href="assets/css/app.css?v=20260918c">
+  <script src="assets/js/boot.js?v=20260918d"></script>
+  <link rel="stylesheet" href="assets/css/app.css?v=20260918d">
+  <style>
+    .book-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      color: #e8f1ff;
+      background: rgba(7, 24, 51, 0.92);
+      font-size: 15px;
+    }
+    .book-loading::before {
+      content: "";
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .book-loading[hidden] { display: none; }
+    .book-wrap { position: relative; }
+  </style>
 </head>
 <body class="book-screen">
   <header class="app-bar">
-    <a class="icon-btn" href="index.html?v=20260918c" aria-label="返回">‹</a>
+    <a class="icon-btn" href="index.html?v=20260918d" aria-label="返回">‹</a>
     <h1>会务手册</h1>
     <div class="page-tag" id="pageTag">1 / 11</div>
   </header>
-  <p class="book-hint">滑动或点书页边缘，像翻报纸一样</p>
+  <p class="book-hint">滑动或点书页边缘翻页</p>
   <div class="book-wrap">
+    <div class="book-loading" id="bookLoading">手册加载中，请稍候…</div>
     <div id="book"></div>
   </div>
   <div class="book-controls">
     <button class="ctrl-btn" id="prevBtn" type="button">上一页</button>
     <button class="ctrl-btn" id="nextBtn" type="button">下一页</button>
   </div>
-  <script src="assets/js/page-flip.browser.js?v=20260918c"></script>
-  <script src="assets/js/cdn.js?v=20260918c"></script>
-  <script src="assets/js/handbook.js?v=20260918c"></script>
+  <script src="assets/js/page-flip.browser.js?v=20260918d"></script>
+  <script src="assets/js/cdn.js?v=20260918d"></script>
+  <script src="assets/js/handbook.js?v=20260918d"></script>
 </body>
 </html>
