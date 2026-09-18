@@ -1,11 +1,14 @@
-const PAGES = Array.from({ length: 11 }, (_, i) =>
-  assetUrl(`assets/pages/page-${String(i + 1).padStart(2, "0")}.jpg`)
-);
-
+const PAGE_COUNT = 11;
 const wrap = document.querySelector(".book-wrap");
 const pageTag = document.getElementById("pageTag");
+const loading = document.getElementById("bookLoading");
 let pageFlip = null;
 let startIndex = 0;
+let imgs = [];
+
+function relPage(i) {
+  return `assets/pages/m/page-${String(i + 1).padStart(2, "0")}.jpg`;
+}
 
 function ensureBook() {
   let el = document.getElementById("book");
@@ -20,7 +23,7 @@ function ensureBook() {
 function measure() {
   const maxW = Math.max(260, wrap.clientWidth - 16);
   const maxH = Math.max(360, wrap.clientHeight - 8);
-  const ratio = 1680 / 2377;
+  const ratio = 1080 / 1528;
   let pageW = maxW;
   let pageH = Math.floor(pageW / ratio);
   if (pageH > maxH) {
@@ -30,24 +33,52 @@ function measure() {
   return { pageW, pageH };
 }
 
+function loadPage(i) {
+  if (i < 0 || i >= imgs.length) return;
+  const img = imgs[i];
+  if (img.dataset.ready === "1" || img.dataset.loading === "1") return;
+  img.dataset.loading = "1";
+  img.src = assetUrl(relPage(i));
+  setTimeout(() => {
+    if (img.dataset.ready === "1" || img.dataset.fallback === "1") return;
+    img.dataset.fallback = "1";
+    img.src = assetFallback(relPage(i));
+  }, 5000);
+}
+
+function around(i) {
+  loadPage(i);
+  loadPage(i + 1);
+  loadPage(i + 2);
+  loadPage(i - 1);
+}
+
 function buildPages(bookEl) {
   bookEl.innerHTML = "";
-  PAGES.forEach((src, i) => {
+  imgs = [];
+  for (let i = 0; i < PAGE_COUNT; i += 1) {
     const page = document.createElement("div");
     page.className = "flip-page";
     const img = document.createElement("img");
-    img.src = src;
     img.alt = `会务手册第 ${i + 1} 页`;
+    img.width = 1080;
+    img.height = 1528;
     img.draggable = false;
     img.decoding = "async";
-    if (i > 1) img.loading = "lazy";
+    img.addEventListener("load", () => {
+      img.dataset.ready = "1";
+      img.dataset.loading = "0";
+      if (i === 0 && loading) loading.hidden = true;
+    });
     img.addEventListener("error", () => {
-      const local = `assets/pages/page-${String(i + 1).padStart(2, "0")}.jpg`;
-      if (!img.getAttribute("src").endsWith(local)) img.src = local;
+      if (img.dataset.fallback === "1") return;
+      img.dataset.fallback = "1";
+      img.src = assetFallback(relPage(i));
     });
     page.appendChild(img);
     bookEl.appendChild(page);
-  });
+    imgs.push(img);
+  }
   return bookEl.querySelectorAll(".flip-page");
 }
 
@@ -62,23 +93,24 @@ function render() {
     pageFlip = null;
   }
 
-  wrap.innerHTML = "";
+  wrap.querySelector("#book")?.remove();
   const bookEl = ensureBook();
   const { pageW, pageH } = measure();
   bookEl.style.width = `${pageW}px`;
   bookEl.style.height = `${pageH}px`;
   const pages = buildPages(bookEl);
+  around(startIndex);
 
   pageFlip = new St.PageFlip(bookEl, {
     width: pageW,
     height: pageH,
     size: "fixed",
     autoSize: false,
-    maxShadowOpacity: 0.55,
+    maxShadowOpacity: 0.5,
     showCover: true,
     mobileScrollSupport: false,
     usePortrait: true,
-    flippingTime: 800,
+    flippingTime: 720,
     drawShadow: true,
     startPage: startIndex,
     swipeDistance: 22,
@@ -88,10 +120,12 @@ function render() {
 
   pageFlip.loadFromHTML(pages);
   pageFlip.on("flip", (e) => {
-    pageTag.textContent = `${e.data + 1} / ${PAGES.length}`;
+    pageTag.textContent = `${e.data + 1} / ${PAGE_COUNT}`;
+    around(e.data);
   });
   pageFlip.on("init", () => {
-    pageTag.textContent = `${pageFlip.getCurrentPageIndex() + 1} / ${PAGES.length}`;
+    pageTag.textContent = `${pageFlip.getCurrentPageIndex() + 1} / ${PAGE_COUNT}`;
+    around(pageFlip.getCurrentPageIndex());
   });
 }
 
@@ -105,7 +139,7 @@ window.addEventListener("keydown", (e) => {
 let resizeTimer = 0;
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(render, 200);
+  resizeTimer = setTimeout(render, 250);
 });
 
 render();
