@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>大会二维码</title>
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <main class="qr-page">
+    <p>黑龙江大学服务龙江高质量发展大会</p>
+    <h1>扫码查看会务手册</h1>
+    <p>扫码后可翻页阅读会务手册，并查看座位示意图</p>
+    <div class="qr-box">
+      <img src="assets/qr.png" alt="大会二维码">
+    </div>
+    <div class="qr-url" id="qrUrl">加载中…</div>
+    <p style="margin-top:18px">任何人扫码即可打开，不需要和电脑连同一 Wi-Fi。若微信里打不开，请用系统相机扫码，或把链接复制到浏览器。</p>
+  </main>
+  <script>
+    fetch("assets/site.json")
+      .then((r) => r.json())
+      .then((d) => { document.getElementById("qrUrl").textContent = d.url; })
+      .catch(() => { document.getElementById("qrUrl").textContent = location.origin; });
+  </script>
+</body>
+</html>
