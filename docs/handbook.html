@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>会务手册</title>
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -12,15 +12,17 @@
     <h1>会务手册</h1>
     <div class="page-tag" id="pageTag">1 / 11</div>
   </header>
-  <p class="book-hint">左右滑动或点击书页边缘翻页</p>
+  <p class="book-hint">左右滑动翻页</p>
   <div class="book-wrap">
-    <div id="book"></div>
+    <div class="book-stage" id="bookStage">
+      <img id="pageImg" alt="会务手册内页" decoding="async">
+    </div>
   </div>
   <div class="book-controls">
     <button class="ctrl-btn" id="prevBtn" type="button">上一页</button>
     <button class="ctrl-btn" id="nextBtn" type="button">下一页</button>
   </div>
-  <script src="assets/js/page-flip.browser.js"></script>
+  <script src="assets/js/cdn.js"></script>
   <script src="assets/js/handbook.js"></script>
 </body>
 </html>
