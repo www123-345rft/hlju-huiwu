@@ -2,7 +2,9 @@ const viewer = document.getElementById("viewer");
 const img = document.getElementById("seatImg");
 const loading = document.getElementById("seatLoading");
 const localSrc = "assets/seats/seating.jpg";
-img.src = assetUrl(localSrc);
+chooseCdn(localSrc).then(() => {
+  img.src = assetUrl(localSrc);
+});
 
 let scale = 1;
 let x = 0;
