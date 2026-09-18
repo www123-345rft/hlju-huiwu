@@ -1,5 +1,5 @@
 (function () {
-  var VER = "20260918b";
+  var VER = "20260918c";
   try {
     var u = new URL(location.href);
     if (u.searchParams.get("v") !== VER) {
