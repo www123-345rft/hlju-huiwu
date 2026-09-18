@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>座位图</title>
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -12,15 +12,17 @@
     <h1>座位图</h1>
     <div class="page-tag">示意</div>
   </header>
-  <div class="banner">当前为占位示意图，便于先看会场分区与导向；正式座位图 PDF 替换后即可更新。</div>
+  <div class="banner">可双指缩放或用按钮放大。正式座位图替换后会更新。</div>
   <div class="zoom-bar">
     <button id="zoomOut" type="button">缩小</button>
     <button id="zoomReset" type="button">复位</button>
     <button id="zoomIn" type="button">放大</button>
   </div>
   <div class="viewer" id="viewer">
-    <img id="seatImg" src="assets/seats/seating.png" alt="黑龙江大学体育馆示意座位图">
+    <div class="viewer-loading" id="seatLoading">座位图加载中…</div>
+    <img id="seatImg" alt="黑龙江大学体育馆示意座位图" decoding="async">
   </div>
+  <script src="assets/js/cdn.js"></script>
   <script src="assets/js/seats.js"></script>
 </body>
 </html>
