@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>座位图</title>
   <script>
-    window.STATIC_VER = "20260918e";
+    window.STATIC_VER = "20260920c";
     window.STATIC_BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
       ? ""
       : "https://cdn.jsdmirror.com/gh/www123-345rft/hlju-huiwu@main/docs/";
@@ -18,17 +18,28 @@
           location.replace(u.href);
         }
       } catch (e) {}
-      document.write('<link rel="stylesheet" href="' + window.STATIC_BASE + 'assets/css/app.css?v=' + window.STATIC_VER + '">');
+      document.write('<link rel="stylesheet" href="' + window.STATIC_BASE + 'assets/css/app-c.css?v=' + window.STATIC_VER + '">');
     })();
   </script>
 </head>
 <body class="seat-screen">
   <header class="app-bar">
-    <a class="icon-btn" href="go.html?v=20260918e" aria-label="返回">‹</a>
+    <a class="icon-btn" href="go.html?v=20260920c" aria-label="返回">‹</a>
     <h1>座位图</h1>
-    <div class="page-tag">示意</div>
+    <div class="page-tag">查询</div>
   </header>
-  <div class="banner">可双指缩放或用按钮放大。正式座位图替换后会更新。</div>
+  <section class="seat-search" aria-label="按姓名查找座位">
+    <form id="seatSearchForm" class="seat-search-form" autocomplete="off">
+      <label for="seatName">输入姓名，查询所在区域、排号和座号</label>
+      <div class="seat-search-row">
+        <input id="seatName" name="name" type="text" placeholder="请输入完整姓名" maxlength="40" autocomplete="off" required>
+        <button id="seatSearchButton" type="submit" disabled>查找座位</button>
+      </div>
+    </form>
+    <p class="seat-search-status" id="seatSearchStatus" role="status" aria-live="polite">正在加载座位名单…</p>
+    <div class="seat-search-results" id="seatSearchResults" aria-live="polite"></div>
+  </section>
+  <div class="banner">下方为示意座位图，非正式排座依据；实际区域、排号和座号以会务组提供的正式名单为准。</div>
   <div class="zoom-bar">
     <button id="zoomOut" type="button">缩小</button>
     <button id="zoomReset" type="button">复位</button>
@@ -40,7 +51,7 @@
   </div>
   <script>
     (function () {
-      var files = ["assets/js/e-cdn.js", "assets/js/e-seats.js"];
+      var files = ["assets/js/g-seats.js", "assets/js/seat-lookup.js"];
       var i = 0;
       function next() {
         if (i >= files.length) return;
