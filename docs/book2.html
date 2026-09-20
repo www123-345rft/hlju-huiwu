@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>会务手册</title>
+  <script>
+    window.STATIC_VER = "20260920a";
+    window.STATIC_BASE = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+      ? ""
+      : "https://cdn.jsdmirror.com/gh/www123-345rft/hlju-huiwu@main/docs/";
+    (function () {
+      try {
+        var u = new URL(location.href);
+        if (u.searchParams.get("v") !== window.STATIC_VER) {
+          u.searchParams.set("v", window.STATIC_VER);
+          location.replace(u.href);
+        }
+      } catch (e) {}
+      document.write('<link rel="stylesheet" href="' + window.STATIC_BASE + 'assets/css/app.css?v=' + window.STATIC_VER + '">');
+    })();
+  </script>
+  <style>
+    .book-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      color: #e8f1ff;
+      background: rgba(7, 24, 51, 0.92);
+      font-size: 15px;
+    }
+    .book-loading::before {
+      content: "";
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .book-loading[hidden] { display: none; }
+    .book-wrap { position: relative; }
+  </style>
+</head>
+<body class="book-screen">
+  <header class="app-bar">
+    <a class="icon-btn" href="go.html?v=20260920a" aria-label="返回">‹</a>
+    <h1>会务手册</h1>
+    <div class="page-tag" id="pageTag">1 / 11</div>
+  </header>
+  <p class="book-hint">滑动或点书页边缘翻页</p>
+  <div class="book-wrap">
+    <div class="book-loading" id="bookLoading">手册加载中，请稍候…</div>
+    <div id="book"></div>
+  </div>
+  <div class="book-controls">
+    <button class="ctrl-btn" id="prevBtn" type="button">上一页</button>
+    <button class="ctrl-btn" id="nextBtn" type="button">下一页</button>
+  </div>
+  <script>
+    (function () {
+      var files = [
+        "assets/js/page-flip.browser.js",
+        "assets/js/e-cdn.js",
+        "assets/js/f-handbook.js"
+      ];
+      var i = 0;
+      function next() {
+        if (i >= files.length) return;
+        var el = document.createElement("script");
+        el.src = window.STATIC_BASE + files[i++] + "?v=" + window.STATIC_VER;
+        el.onload = next;
+        document.body.appendChild(el);
+      }
+      next();
+    })();
+  </script>
+</body>
+</html>
